@@ -1,0 +1,5 @@
+jwt:
+  expiryHour: 1
+  expiryDay: 14
+  secretKey: d9EDGWm9Z/nLvsbTuhQDXNhKzlbPXQ5ObYNztMPyLkQ=
+  refreshKey: DrF2Q9TpJhFjeDpCCFnJLH0hL6liQQahK1EK++wmYSA=
