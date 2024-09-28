@@ -31,22 +31,24 @@ public class PreFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final var authorization = request.getHeader("Authorization");
-
         if (StringUtils.isBlank(authorization) || !authorization.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         final String token = authorization.substring("Bearer ".length());
-
         final String username = jwtService.extractUsername(token, TokenType.ACCESS_TOKEN);
+
         if (StringUtils.isNotEmpty(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userService.userDetailsService().loadUserByUsername(username);
             if (jwtService.isValid(token, TokenType.ACCESS_TOKEN, userDetails)) {
+                // TODO SecurityContext lưu trữ thông tin xác thực của người dùng, bao gồm các role.
                 SecurityContext securityContext = SecurityContextHolder.getContext();
+                // TODO đại dện cho info các thực người dùng
                 UsernamePasswordAuthenticationToken authenticationToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+               // TODO người dùng đã được xác thực và lưu trữ
                 securityContext.setAuthentication(authenticationToken);
                 SecurityContextHolder.setContext(securityContext);
             }

@@ -26,7 +26,6 @@ public record TokenService(TokenRepository tokenRepository) {
 
     public String changeStatus(Token token) {
         tokenRepository.delete(token);
-
         return "deleted !";
     }
 
