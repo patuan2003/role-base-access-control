@@ -21,8 +21,6 @@ public class Group extends AbstractEntity<Integer>{
 
     private String name;
 
-//    private String description;
-
     @OneToMany(mappedBy = "group")
     private Set<UserGroup> userGroups;
 

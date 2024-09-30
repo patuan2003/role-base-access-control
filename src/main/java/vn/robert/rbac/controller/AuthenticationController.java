@@ -20,19 +20,25 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/access")
+    @PostMapping("/access-token")
     public ResponseData<?> login(@RequestBody SignInRequest request) {
         return new ResponseData<>(HttpStatus.OK.value(), "access_token", authenticationService.authenticate(request));
     }
 
-    @PostMapping("/refresh")
+    @PostMapping("/refresh-token")
     public ResponseData<?> refresh(HttpServletRequest request) {
         return new ResponseData<>(HttpStatus.OK.value(), "refresh_token", authenticationService.refreshToken(request));
     }
 
-    @PostMapping("/logout")
+    @PostMapping("/remove-token")
     public ResponseData<String> logout(HttpServletRequest request) {
         return new ResponseData<>(HttpStatus.OK.value(), "logout", authenticationService.logout(request));
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseData<String> forgotPassword(@RequestBody String email) {
+        // implement forgot password logic
+        return new ResponseData<>(HttpStatus.OK.value(), "forgot_password", "Send email success");
     }
 
 }

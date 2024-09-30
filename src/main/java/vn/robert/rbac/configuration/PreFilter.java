@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import vn.robert.rbac.service.JwtService;
+import vn.robert.rbac.service.TokenService;
 import vn.robert.rbac.service.UserService;
 import vn.robert.rbac.util.TokenType;
 
@@ -27,6 +28,7 @@ public class PreFilter extends OncePerRequestFilter {
 
     private final UserService userService;
     private final JwtService jwtService;
+    private final TokenService tokenService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -38,6 +40,12 @@ public class PreFilter extends OncePerRequestFilter {
 
         final String token = authorization.substring("Bearer ".length());
         final String username = jwtService.extractUsername(token, TokenType.ACCESS_TOKEN);
+        final var currentToken = tokenService.getByUsername(username);
+
+        if (StringUtils.isEmpty(currentToken.getAccessToken())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         if (StringUtils.isNotEmpty(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userService.userDetailsService().loadUserByUsername(username);
